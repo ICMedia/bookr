@@ -9,14 +9,27 @@ import BookableStore from "../stores/BookableStore";
 import BookingPartActions from "../actions/BookingPartActions";
 import BookingPartStore from "../stores/BookingPartStore";
 
+import AuthStore from "../stores/AuthStore";
+
 export default class BookableDetail extends React.Component {
 	constructor (props) {
 		super(props);
 
+		this.state = {
+			user: AuthStore.getUserInfo()
+		};
+
 		this.onNewBooking = this.onNewBooking.bind(this);
 		this.onBookableStoreChange = this.onBookableStoreChange.bind(this);
 		this.onBookingPartStoreChange = this.onBookingPartStoreChange.bind(this);
+		this.onAuthStoreChange = this.onAuthStoreChange.bind(this);
 	}
+
+	onAuthStoreChange () {
+		this.setState({
+			user: AuthStore.getUserInfo()
+		})
+	};
 
 	updateWithVariables (props) {
 		BookableActions.getById(props.bookableId);
@@ -31,6 +44,7 @@ export default class BookableDetail extends React.Component {
 	componentWillMount () {
 		BookableStore.addChangeListener(this.onBookableStoreChange);
 		BookingPartStore.addChangeListener(this.onBookingPartStoreChange);
+		AuthStore.addChangeListener(this.onAuthStoreChange);
 
 		this.updateWithVariables(this.props);
 	}
@@ -38,6 +52,7 @@ export default class BookableDetail extends React.Component {
 	componentWillUnmount() {
 		BookableStore.removeChangeListener(this.onBookableStoreChange);
 		BookingPartStore.removeChangeListener(this.onBookingPartStoreChange);
+		AuthStore.removeChangeListener(this.onAuthStoreChange);
 	}
 
 	componentWillReceiveProps (nextProps) {
@@ -69,22 +84,32 @@ export default class BookableDetail extends React.Component {
 
 		const {year, month, day} = this.props;
 
+		const allowedEventTypes = bookable.approvers.map((approver) => approver.approver.username).indexOf(this.state.user.username) !== -1 ? ['booking', 'unavailable', 'warning'] : ['booking'];
+
 		return (
-			<div className="container">
-				<div>
-					<h1>{bookable.name}</h1>
+			<div>
+				<div className="jumbotron">
+					<div className="container">
+						<h1>{bookable.name}</h1>
 
-					<p>{bookable.notes}</p>
+						<p>{bookable.notes}</p>
+					</div>
 				</div>
 
-				<div>
-					<h2>Upcoming Bookings</h2>
-					<Calendar events={bookingParts} year={year} month={month} day={day} pathPrefix={`/bookables/${bookable.id}`} displayText={this.generateDisplayText} generateLink={this.generateLink} />
+				<div className="container">
+					<div>
+						<h2>Upcoming Bookings</h2>
+						<Calendar events={bookingParts} year={year} month={month} day={day} pathPrefix={`/bookables/${bookable.id}`} displayText={this.generateDisplayText} generateLink={this.generateLink} />
+					</div>
 				</div>
 
-				<div>
-					<h2>Make a new booking</h2>
-					<NewBookingForm bookableId={bookable.id} onNewBookingCreated={this.onNewBooking}></NewBookingForm>
+				<br />{/** TODO(lukegb): actually use CSS **/}
+
+				<div className="container">
+					<div>
+						<h2>Make a new booking</h2>
+						<NewBookingForm bookableId={bookable.id} onNewBookingCreated={this.onNewBooking} allowedEventTypes={allowedEventTypes}></NewBookingForm>
+					</div>
 				</div>
 			</div>
 		);

@@ -13,6 +13,13 @@
 	background-color: rgba($bg-cancelled, 0.3);
 }
 
+.tablerow-type-unavailable {
+	background: $bg-unavailable;
+}
+.tablerow-type-warning {
+	background: $bg-warning;
+}
+
 .event-title-type-unavailable:before {
 	@include unavailable-before;
 }

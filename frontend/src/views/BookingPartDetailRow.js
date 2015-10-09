@@ -9,6 +9,8 @@ import BookingPartStore from "../stores/BookingPartStore";
 import BookableStore from "../stores/BookableStore";
 import AuthStore from "../stores/AuthStore";
 
+import GlobalConstants from "../constants/GlobalConstants";
+
 import BookingPartActions from "../actions/BookingPartActions";
 
 export default class BookingPartDetailRow extends React.Component {
@@ -36,13 +38,13 @@ export default class BookingPartDetailRow extends React.Component {
 	}
 
 	render () {
-		const { bookingPart, showApprovalColumn } = this.props;
+		const { bookingPart, showApprovalColumn, showStatusColumn } = this.props;
 		return (
-			<tr key={bookingPart.id} className={`tablerow-status-${bookingPart.status}`}>
+			<tr key={bookingPart.id} className={`tablerow-status-${bookingPart.status} tablerow-type-${bookingPart.booking.type}`}>
 				<th><Link to={`/bookables/${bookingPart.bookable.id}`}>{bookingPart.bookable.name}</Link></th>
-				<td>{statuses.prettyTextForStatus(bookingPart.status)}</td>
-				<td>{moment(bookingPart.booking_start).format('Mo MMM YYYY @ HH:mm')}</td>
-				<td>{moment(bookingPart.booking_end).format('Mo MMM YYYY @ HH:mm')}</td>
+				{showStatusColumn ? <td>{statuses.prettyTextForStatus(bookingPart.status)}</td> : []}
+				<td>{moment(bookingPart.booking_start).format(GlobalConstants.DATE_FORMAT)}</td>
+				<td>{moment(bookingPart.booking_end).format(GlobalConstants.DATE_FORMAT)}</td>
 				<td>{moment.duration(moment(bookingPart.booking_end).diff(moment(bookingPart.booking_start))).humanize()}</td>
 				{showApprovalColumn ? (
 					<td>
@@ -56,7 +58,7 @@ export default class BookingPartDetailRow extends React.Component {
 	}
 
 	approvable() {
-		return BookingPartStore.hasConflicts(this.props.bookingPart.id);
+		return !BookingPartStore.hasConflicts(this.props.bookingPart.id);
 	}
 
 	renderButtons () {

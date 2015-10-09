@@ -12,10 +12,18 @@ export default class BaseStore extends EventEmitter {
 	}
 
 	addChangeListener(callback) {
+		if (__SERVER__) {
+			console.trace("addChangeListener called on server-side!");
+			return;
+		}
 		this.on(CHANGE_EVENT, callback);
 	}
 
 	removeChangeListener(callback) {
+		if (__SERVER__) {
+			console.trace("removeChangeListener called on server-side!");
+			return;
+		}
 		this.removeListener(CHANGE_EVENT, callback);
 	}
 }

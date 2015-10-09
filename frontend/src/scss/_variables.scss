@@ -26,3 +26,18 @@ $bg-cancelled: sandybrown;
 	text-align: center;
 	padding-right: 0.3em;
 }
+
+$unavailable-1: rgba(200, 100, 100, 0.1);
+$unavailable-2: rgba(200, 100, 100, 0.05);
+$bg-unavailable: repeating-linear-gradient(
+		45deg,
+		$unavailable-1, $unavailable-1 3px, $unavailable-2 3px, $unavailable-2 6px
+);
+
+
+$warning-1: rgba(200, 200, 100, 0.3);
+$warning-2: rgba(200, 200, 100, 0.1);
+$bg-warning: repeating-linear-gradient(
+		45deg,
+		$warning-1, $warning-1 3px, $warning-2 3px, $warning-2 6px
+);

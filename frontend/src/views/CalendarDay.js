@@ -5,7 +5,7 @@ import moment from "moment";
 
 export default class CalendarDay extends React.Component {
 	render () {
-		const { date, events } = this.props;
+		const { date, events, smallMode } = this.props;
 
 		let classNames = "calendar-day";
 		if (this.props.isOtherMonth) {
@@ -28,13 +28,15 @@ export default class CalendarDay extends React.Component {
 				if (event.ends_today) {
 					classNames += " calendar-event-end";
 				}
-				let target = event.pushUpBy - processedEvents.length;
-				for (let n = 0; n < target; n++) {
-					let name = `${event.id}-${n}-${event.pushUpBy}-${processedEvents.length}`;
-					processedEvents.push(<div className="calendar-event-spacefiller" data-what={name} key={name} />);
+				if (!smallMode) {
+					let target = event.pushUpBy - processedEvents.length;
+					for (let n = 0; n < target; n++) {
+						let name = `${event.id}-${n}-${event.pushUpBy}-${processedEvents.length}`;
+						processedEvents.push(<div className="calendar-event-spacefiller" data-what={name} key={name}/>);
+					}
 				}
 				let text = "";
-				if (event.show_text) {
+				if (event.show_text || smallMode) {
 					text = this.props.displayText(event);
 					classNames += " calendar-event-text";
 				}
@@ -51,13 +53,15 @@ export default class CalendarDay extends React.Component {
 						text += " ";
 					text += `\(-${moment(event.booking_end).format("HH:mm")})`;
 				}
-				processedEvents.push(<div className={classNames} key={event.id}><Link to={this.props.link(event)}>{text}</Link></div>);
+				processedEvents.push(<div className={classNames} data-pushupby={event.pushUpBy} key={event.id}><Link to={this.props.link(event)}>{text}</Link></div>);
 			}
 		}
 
+		const formattedDate = smallMode ? date.format("ddd D") : date.format("D");
+
 		return (
 			<div className={classNames}>
-				{date.format("D")}
+				{formattedDate}
 				<div className="calendar-events">
 					{processedEvents}
 				</div>

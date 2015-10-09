@@ -15,6 +15,7 @@ class BookingStore extends BaseStore {
 	}
 
 	listForQuery(query) {
+		if (!_queryCache[API.toQueryString(query)]) return [];
 		return _queryCache[API.toQueryString(query)].map((bookingId) => _bookings[bookingId]);
 	}
 
@@ -33,7 +34,9 @@ AppDispatcher.register((action) => {
 			BOOKING_STORE.emitChange();
 			break;
 		case BookingConstants.BOOKING_RECEIVE_BOOKINGS_FOR_QUERY:
-			_bookings = Object.assign(_bookings, action.bookings);
+			action.bookings.map((booking) => {
+				_bookings[booking.id] = booking;
+			});
 			_queryCache[API.toQueryString(action.query)] = action.bookings.map((booking) => booking.id);
 			BOOKING_STORE.emitChange();
 			break;

@@ -46,8 +46,17 @@ class BookingViewSet(viewsets.ModelViewSet):
             )
             qs = qs.filter(
                 bookingpart__bookable__approvers=can_approve_qs, bookingpart__status='pending_approval'
+            ).distinct().order_by('bookingpart__booking_start')
+
+        if self.request.query_params.get('created_by', None):
+            qs = qs.filter(
+                creator__username=self.request.query_params['created_by']
             )
-            print qs.query
+
+        if self.request.query_params.get('in_the_future', None):
+            qs = qs.filter(
+                bookingpart__booking_end__gte=datetime.datetime.now()
+            )
 
         return qs
 
@@ -84,6 +93,8 @@ class BookingPartViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
                     end_date = datetime.date(in_date_bits[0], in_date_bits[1] + 1, 1)
                 else:
                     end_date = datetime.date(in_date_bits[0] + 1, 1, 1)
+                start_date -= datetime.timedelta(days=7)
+                end_date += datetime.timedelta(days=7)
             elif len(in_date_bits) == 3:
                 start_date = datetime.date(in_date_bits[0], in_date_bits[1], in_date_bits[2])
                 end_date = start_date + datetime.timedelta(days=1)

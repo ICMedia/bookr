@@ -12,7 +12,7 @@ class BookableList extends React.Component {
 
 		return (
 			<div className="container">
-				<h2>Bookable Spaces</h2>
+				<h3>Bookable Spaces</h3>
 				<BookableListPanel bookables={bookables}></BookableListPanel>
 			</div>
 		);
@@ -30,7 +30,12 @@ export default Transmit.createContainer(BookableList, {
 			let destination = API.path("/bookings/bookables/");
 
 			return fetch(
-				destination + `?page=${nextPage}`
+				destination + `?page=${nextPage}`, {
+					method: 'GET',
+					headers: {
+						'Accept': 'application/json'
+					}
+				}
 			).then((response) => response.json()).then((body) => {
 				if (!body.results || !body.results.length) {
 					pagesToFetch = 0;

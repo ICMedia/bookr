@@ -23,12 +23,16 @@ export default class LoginForm extends React.Component {
 
 	componentWillMount() {
 		this.mounted = true;
-		AuthStore.addChangeListener(this.checkAuthErrors);
+		if (__CLIENT__) {
+			AuthStore.addChangeListener(this.checkAuthErrors);
+		}
 	}
 
 	componentWillUnmount() {
 		this.mounted = false;
-		AuthStore.removeChangeListener(this.checkAuthErrors);
+		if (__CLIENT__) {
+			AuthStore.removeChangeListener(this.checkAuthErrors);
+		}
 	}
 
 	render () {
