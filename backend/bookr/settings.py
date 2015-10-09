@@ -173,6 +173,8 @@ if os.environ.get('MODE', 'development').lower() == 'production':
 
     SECRET_KEY = os.environ['SECRET_KEY']
 
+    STATIC_ROOT = os.environ['STATIC_ROOT']
+
     AUTH_LDAP_START_TLS = True
 else:
     import logging
