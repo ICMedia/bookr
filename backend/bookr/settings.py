@@ -32,45 +32,45 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = (
-	'django.contrib.admin',
-	'django.contrib.auth',
-	'django.contrib.contenttypes',
-	'django.contrib.sessions',
-	'django.contrib.messages',
-	'django.contrib.staticfiles',
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
 
-	'rest_framework',
+    'rest_framework',
 
-	'bookings',
+    'bookings',
 )
 
 MIDDLEWARE_CLASSES = (
-	'django.contrib.sessions.middleware.SessionMiddleware',
-	'django.middleware.common.CommonMiddleware',
-	'django.middleware.csrf.CsrfViewMiddleware',
-	'django.contrib.auth.middleware.AuthenticationMiddleware',
-	'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
-	'django.contrib.messages.middleware.MessageMiddleware',
-	'django.middleware.clickjacking.XFrameOptionsMiddleware',
-	'django.middleware.security.SecurityMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.security.SecurityMiddleware',
 )
 
 ROOT_URLCONF = 'bookr.urls'
 
 TEMPLATES = [
-	{
-		'BACKEND': 'django.template.backends.django.DjangoTemplates',
-		'DIRS': [],
-		'APP_DIRS': True,
-		'OPTIONS': {
-			'context_processors': [
-				'django.template.context_processors.debug',
-				'django.template.context_processors.request',
-				'django.contrib.auth.context_processors.auth',
-				'django.contrib.messages.context_processors.messages',
-			],
-		},
-	},
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
 ]
 
 WSGI_APPLICATION = 'bookr.wsgi.application'
@@ -80,11 +80,11 @@ WSGI_APPLICATION = 'bookr.wsgi.application'
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 
 DATABASES = {
-	'default': {
-		'ENGINE': 'django.db.backends.postgresql_psycopg2',
-		'NAME': 'bookr',
-		'ATOMIC_REQUESTS': True
-	}
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'bookr',
+        'ATOMIC_REQUESTS': True
+    }
 }
 
 
@@ -110,18 +110,30 @@ STATIC_URL = '/static/'
 # Django Rest Framework configuration
 
 REST_FRAMEWORK = {
-	'DEFAULT_PERMISSION_CLASSES': (
-		'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
-	),
-	'DEFAULT_AUTHENTICATION_CLASSES': (
-		'rest_framework.authentication.SessionAuthentication',
-		'rest_framework.authentication.BasicAuthentication',
-		'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
-	),
-	'DEFAULT_PAGINATION_CLASS': 'api.PageNumberPagination',
-	'PAGE_SIZE': 20,
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+    ),
+    'DEFAULT_PAGINATION_CLASS': 'api.PageNumberPagination',
+    'PAGE_SIZE': 20,
 }
 
 JWT_AUTH = {
-	'JWT_ALLOW_REFRESH': True,
+    'JWT_ALLOW_REFRESH': True,
 }
+
+import os
+if os.environ.get('MODE', 'development') == 'PRODUCTION':
+    DEBUG = False
+    TEMPLATE_DEBUG = False
+
+    DATABASES['default']['NAME'] = os.environ['DATABASE_DB']
+    DATABASES['default']['USER'] = os.environ['DATABASE_USER']
+    DATABASES['default']['PASSWORD'] = os.environ['DATABASE_PASSWORD']
+    DATABASES['default']['HOST'] = os.environ['DATABASE_HOST']
+
+    SECRET_KEY = os.environ['SECRET_KEY']
