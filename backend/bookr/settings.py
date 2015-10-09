@@ -150,7 +150,7 @@ AUTH_LDAP_USER_ATTR_MAP = {
     "email": "mail"
 }
 AUTH_LDAP_USER_FLAGS_BY_GROUP = {
-    "is_staff": "cn=wheel,cn=groups,cn=accounts,dc=media,dc=su,dc=ic,dc=ac,dc=uk",
+    "is_staff": "cn=roombookingadmins,cn=groups,cn=accounts,dc=media,dc=su,dc=ic,dc=ac,dc=uk",
     "is_superuser": "cn=wheel,cn=groups,cn=accounts,dc=media,dc=su,dc=ic,dc=ac,dc=uk",
 }
 AUTH_LDAP_BIND_AS_AUTHENTICATING_USER = True
@@ -172,6 +172,8 @@ if os.environ.get('MODE', 'development').lower() == 'production':
     DATABASES['default']['HOST'] = os.environ['DATABASE_HOST']
 
     SECRET_KEY = os.environ['SECRET_KEY']
+
+    STATIC_ROOT = os.environ['STATIC_ROOT']
 
     AUTH_LDAP_START_TLS = True
 else:

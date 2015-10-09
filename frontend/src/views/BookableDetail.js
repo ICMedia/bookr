@@ -56,7 +56,7 @@ export default class BookableDetail extends React.Component {
 	}
 
 	componentWillReceiveProps (nextProps) {
-		const interestedIn = ["year", "month", "day"];
+		const interestedIn = ["year", "month", "day", "bookableId"];
 		let hasChanged = false;
 		for (let interestingProperty of interestedIn) {
 			if (nextProps[interestingProperty] != this.props[interestingProperty]) {
