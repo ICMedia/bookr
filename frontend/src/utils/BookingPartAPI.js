@@ -14,23 +14,43 @@ class BookingPartAPI {
 		qdata.page = page;
 		let qs = API.toQueryString(qdata);
 
-		return API.fetchJsonPage(`/bookings/booking-parts/${qs}`);
+		return API.fetchJsonPage(`/bookings/booking-parts/${qs}`, {
+			method: 'GET',
+			headers: {
+				'Accept': 'application/json'
+			}
+		});
 	}
 
 	listForBooking(bookingId, qdata) {
-		return API.fetchAllJsonPages(`/bookings/bookings/${bookingId}/booking-parts/`, qdata, {}, (results, complete) => {
+		return API.fetchAllJsonPages(`/bookings/bookings/${bookingId}/booking-parts/`, qdata, {
+			method: 'GET',
+			headers: {
+				'Accept': 'application/json'
+			}
+		}, (results, complete) => {
 			BookingPartServerActions.receiveBookingPartsForBooking(bookingId, qdata, results, complete);
 		});
 	}
 
 	listForBookable(bookableId, qdata) {
-		return API.fetchAllJsonPages(`/bookings/bookables/${bookableId}/booking-parts/`, qdata, {}, (results, complete) => {
+		return API.fetchAllJsonPages(`/bookings/bookables/${bookableId}/booking-parts/`, qdata, {
+			method: 'GET',
+			headers: {
+				'Accept': 'application/json'
+			}
+		}, (results, complete) => {
 			BookingPartServerActions.receiveBookingPartsForBookable(bookableId, qdata, results, complete);
 		});
 	}
 
 	getById(id) {
-		return API.fetchJson(`/bookings/booking-parts/${id}/`).then((bookingpart) => {
+		return API.fetchJson(`/bookings/booking-parts/${id}/`, {
+			method: 'GET',
+			headers: {
+				'Accept': 'application/json'
+			}
+		}).then((bookingpart) => {
 			BookingPartServerActions.receiveBookingPart(bookingpart);
 		});
 	}
@@ -61,8 +81,8 @@ class BookingPartAPI {
 			},
 			body: JSON.stringify(bookingPart)
 		}).then((resp) => {
-			return this.getById(resp);
-		}).catch((err) => {
+			return this.getById(resp.id);
+		}, (err) => {
 			if (err instanceof ResponseError && err.response.status === 400) {
 				err.response.json().then((responseJson) => {
 					BookingPartServerActions.receiveCreateErrors(responseJson);
@@ -76,7 +96,6 @@ class BookingPartAPI {
 					non_field_errors: ['Something went wrong - try again later?']
 				});
 			}
-			return null;
 		});
 	}
 

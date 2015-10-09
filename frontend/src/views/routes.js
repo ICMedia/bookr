@@ -24,7 +24,9 @@ if (__SERVER__) {
 } else {
 	var BookableList = require('./BookableList'),
 		BookableDetailPage = require('./BookableDetailPage'),
-		BookingDetailPage = require('./BookingDetailPage');
+		BookingDetailPage = require('./BookingDetailPage'),
+		MyBookingsPage = require('./MyBookingsPage'),
+		ApprovalQueuePage = require('./ApprovalQueuePage');
 
 	exportedRouter = (
 		<Router>
@@ -33,6 +35,10 @@ if (__SERVER__) {
 					<Route path=":year/:month" component={BookableDetailPage} />
 				</Route>
 				<Route path="bookings/:bookingId" component={BookingDetailPage} />
+				<Route path="me">
+					<Route path="bookings" component={MyBookingsPage} />
+					<Route path="queue" component={ApprovalQueuePage} />
+				</Route>
 			</Route>
 		</Router>
 	);

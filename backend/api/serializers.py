@@ -118,7 +118,7 @@ class BookingPartReadSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         raise Exception("this is nonsensical")
 
-    def update(self, validated_data):
+    def update(self, instance, validated_data):
         raise Exception("this is nonsensical")
 
     def get_potential_overlaps(self, obj):

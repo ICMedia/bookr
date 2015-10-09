@@ -13,17 +13,32 @@ class BookableAPI {
 		qdata.page = page;
 		let qs = API.toQueryString(qdata);
 
-		return API.fetchJsonPage(`/bookings/bookables/${qs}`);
+		return API.fetchJsonPage(`/bookings/bookables/${qs}`, {
+			method: 'GET',
+			headers: {
+				'Accept': 'application/json'
+			}
+		});
 	}
 
 	listAll(qdata) {
-		return API.fetchAllJsonPages(`/bookings/bookables/`, qdata, {}, (results) => {
+		return API.fetchAllJsonPages(`/bookings/bookables/`, qdata, {
+			method: 'GET',
+			headers: {
+				'Accept': 'application/json'
+			}
+		}, (results) => {
 			BookableServerActions.receiveBookablesForQuery(qdata, results);
 		});
 	}
 
 	getById(id) {
-		return API.fetchJson(`/bookings/bookables/${id}/`).then((bookable) => {
+		return API.fetchJson(`/bookings/bookables/${id}/`, {
+			method: 'GET',
+			headers: {
+				'Accept': 'application/json'
+			}
+		}).then((bookable) => {
 			BookableServerActions.receiveBookable(bookable);
 		});
 	}

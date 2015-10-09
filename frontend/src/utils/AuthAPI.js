@@ -78,18 +78,27 @@ class AuthAPI {
 	}
 
 	setToken(newToken) {
-		AuthServerActions.receiveToken(newToken);
+		try {
+			AuthServerActions.receiveToken(newToken);
+		} catch (ex) {
+			console.error("Error in receiveToken", ex);
+		}
 	}
 
 	setUserInfo(newUserInfo) {
-		AuthServerActions.receiveUserInfo(newUserInfo);
+		try {
+			AuthServerActions.receiveUserInfo(newUserInfo);
+		} catch (ex) {
+			console.error("Error in receiveUserInfo", ex);
+		}
 	}
 
 	refreshUserInfo(token) {
 		API.fetchJson('/user/', {
 			method: 'GET',
 			headers: {
-				'Authorization': API.makeAuthHeader(token)
+				'Authorization': API.makeAuthHeader(token),
+				'Accept': 'application/json'
 			}
 		}).then((userInfo) => {
 			this.setUserInfo(userInfo);

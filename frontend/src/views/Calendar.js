@@ -18,8 +18,7 @@ export default class Calendar extends React.Component {
 			return event;
 		});
 		sortedEvents.sort((a, b) => {
-			let adate = a.booking_start_moment;
-			let bdate = b.booking_start_moment;
+			let adate = a.booking_start_moment; let bdate = b.booking_start_moment;
 			if (adate.isBefore(bdate)) {
 				return -1;
 			} else if (adate.isAfter(bdate)) {
@@ -49,7 +48,7 @@ export default class Calendar extends React.Component {
 				todayEvent.show_text = todayEvent.begins_today || myDate.day() === 1 || myDate.date() === 1;
 				if (todayEvent.begins_today) {
 					todayEvent.pushUpBy = 0;
-					currentPushUp = dayEvents[myDate.format("YYYY-MM-DD")].map((ev) => ev.pushUpBy).reduce((prev, cur) => cur > prev ? cur : prev+1, 0);
+					currentPushUp = dayEvents[myDate.format("YYYY-MM-DD")].map((ev) => ev.pushUpBy+1).reduce((prev, cur) => cur > prev ? cur : prev+1, 0);
 				} else if (myDate.day() === 1) {
 					todayEvent.pushUpBy = 0;
 					currentPushUp = 0;
@@ -62,6 +61,7 @@ export default class Calendar extends React.Component {
 		}
 
 		let dayCells = [];
+		let dayCellsSmall = [];
 
 		// how many days from the preceding month?
 		let momentArr = [year, month, day].filter((x) => x).map((x) => parseInt(x, 10));
@@ -84,6 +84,9 @@ export default class Calendar extends React.Component {
 		do {
 			const key = myMoment.format("YYYY-MM-DD");
 			dayCells.push(<CalendarDay isOtherMonth={false} events={dayEvents[key]} key={key} date={moment(myMoment)} displayText={this.props.displayText} link={this.props.generateLink} />);
+			dayCellsSmall.push(<CalendarDay isOtherMonth={false} events={dayEvents[key]} key={key}
+											date={moment(myMoment)} displayText={this.props.displayText}
+											link={this.props.generateLink} smallMode={true}/>);
 			myMoment.add(1, 'days');
 		} while (myMoment.date() != 1);
 
@@ -99,10 +102,10 @@ export default class Calendar extends React.Component {
 			<div>
 				<h4 className="calendar-title">{monthStart.format("MMMM YYYY")}</h4>
 				<ul className="pager">
-					<li className="pager-prev"><Link to={`${this.props.pathPrefix}/${moment(monthStart).subtract(1, 'month').format('YYYY/MM')}`}>Last month</Link></li>
-					<li className="pager-next"><Link to={`${this.props.pathPrefix}/${moment(monthStart).add(1, 'month').format('YYYY/MM')}`}>Next month</Link></li>
+					<li className="pager-prev"><Link to={`${this.props.pathPrefix}/${moment(monthStart).subtract(1, 'month').format('YYYY/MM')}`}>← <span className="hidden-sm-down">Last month</span></Link></li>
+					<li className="pager-next"><Link to={`${this.props.pathPrefix}/${moment(monthStart).add(1, 'month').format('YYYY/MM')}`}><span className="hidden-sm-down">Next month</span> →</Link></li>
 				</ul>
-				<div className={`calendar` + (isLoading ? ' calendar-loading': '')}>
+				<div className={`calendar calendar-large hidden-sm-down` + (isLoading ? ' calendar-loading': '')}>
 					<div className="calendar-head-day">Mon</div>
 					<div className="calendar-head-day">Tue</div>
 					<div className="calendar-head-day">Wed</div>
@@ -111,6 +114,9 @@ export default class Calendar extends React.Component {
 					<div className="calendar-head-day">Sat</div>
 					<div className="calendar-head-day">Sun</div>
 					{dayCells}
+				</div>
+				<div className={`calendar calendar-small hidden-md-up` + (isLoading ? ' calendar-loading': '')}>
+					{dayCellsSmall}
 				</div>
 
 				<h5 className="calendar-event-key-title">Colour key</h5>

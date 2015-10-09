@@ -14,18 +14,33 @@ class BookingAPI {
 		qdata.page = page;
 		let qs = API.toQueryString(qdata);
 
-		return API.fetchJsonPage(`/bookings/bookings/${qs}`);
+		return API.fetchJsonPage(`/bookings/bookings/${qs}`, {
+			method: 'GET',
+			headers: {
+				'Accept': 'application/json'
+			}
+		});
 	}
 
 	listAll(qdata) {
-		return API.fetchAllJsonPages(`/bookings/bookings/`, qdata, {}, (results) => {
+		return API.fetchAllJsonPages(`/bookings/bookings/`, qdata, {
+			method: 'GET',
+			headers: {
+				'Accept': 'application/json'
+			}
+		}, (results) => {
 			BookingServerActions.receiveBookingsForQuery(qdata, results);
 			return results;
 		});
 	}
 
 	getById(id) {
-		return API.fetchJson(`/bookings/bookings/${id}/`).then((booking) => {
+		return API.fetchJson(`/bookings/bookings/${id}/`, {
+			method: 'GET',
+			headers: {
+				'Accept': 'application/json'
+			}
+		}).then((booking) => {
 			BookingServerActions.receiveBooking(booking);
 		});
 	}

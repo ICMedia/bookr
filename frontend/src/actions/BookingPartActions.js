@@ -2,6 +2,10 @@ import BookingPartAPI from "../utils/BookingPartAPI";
 
 class BookingPartActions {
 
+	getById(bookingId) {
+		BookingPartAPI.getById(bookingId);
+	}
+
 	listForBooking(bookingId, qdata) {
 		BookingPartAPI.listForBooking(bookingId, qdata);
 	}

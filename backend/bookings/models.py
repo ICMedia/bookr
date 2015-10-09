@@ -83,9 +83,7 @@ class BookingPart(TableLockerMixin, models.Model):
     def validate_unique(self, exclude=None):
         super(BookingPart, self).validate_unique(exclude)
 
-        print "in validate_unique"
         if self.status == BookingPart.STATUS.approved:
-            print "got status", self.status
             # we need to ensure that there are no active bookings for this!
             self.lock_table('SHARE ROW EXCLUSIVE')
             overlapping_bookings = BookingPart.objects.filter(
@@ -112,7 +110,6 @@ class BookingPart(TableLockerMixin, models.Model):
         if self.pk is not None:
             overlapping_bookings = overlapping_bookings.exclude(pk=self.pk)
         return overlapping_bookings
-
 
     def __str__(self):
         return "{}: {} to {} on {}".format(self.status, self.booking_start, self.booking_end, self.bookable)

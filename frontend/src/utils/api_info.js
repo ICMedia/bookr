@@ -54,9 +54,6 @@ export class API {
 		let getPage = (currentPage=1) => {
 			let myqdata = Object.assign({}, qdata);
 			myqdata.page = currentPage;
-			if (IS_DEBUG) {
-				myqdata.per_page = 1;
-			}
 
 			return API.fetchJsonPage(apiPath + API.toQueryString(myqdata), params).then((results) => {
 				resultsSoFar = resultsSoFar.concat(results);

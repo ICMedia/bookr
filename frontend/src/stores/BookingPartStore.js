@@ -47,12 +47,21 @@ class BookingPartStore extends BaseStore {
 
 	hasConflicts(id) {
 		if (!_bookingParts[id]) return true;
-		return _bookingParts[id].potential_overlaps.map((overlapPart) => overlapPart.status === 'approved' && overlapPart.booking.type !== 'warning').indexOf(true) === -1;
+		return this.conflicts(id).filter((conflict) => conflict.type === 'hard').length > 0;
 	}
 
 	hasSoftConflicts(id) {
 		if (!_bookingParts[id]) return true;
-		return _bookingParts[id].potential_overlaps.map((overlapPart) => overlapPart.status === 'approved' && overlapPart.booking.type === 'warning').indexOf(true) === -1;
+		return this.conflicts(id).filter((conflict) => conflict.type === 'soft').length > 0;
+	}
+
+	conflicts(id) {
+		if (!_bookingParts[id]) return [];
+		return _bookingParts[id].potential_overlaps.map((overlapPart) => {
+			overlapPart = Object.assign({}, overlapPart);
+			overlapPart.type = (overlapPart.status === 'approved' && overlapPart.booking.type !== 'warning') ? 'hard' : 'soft';
+			return overlapPart;
+		})
 	}
 }
 

@@ -18,7 +18,8 @@ export default class NewBookingForm extends React.Component {
 		this.state = {
 			booking: {
 				name: '',
-				description: ''
+				description: '',
+				type: 'booking'
 			},
 			bookingPart: {
 				startDate: '',
@@ -35,6 +36,7 @@ export default class NewBookingForm extends React.Component {
 		this.handleChangeBookingDescription = this.handleChangeBookingDescription.bind(this);
 		this.handleChangeBookingPartStartDate = this.handleChangeBookingPartStartDate.bind(this);
 		this.handleChangeBookingPartEndDate = this.handleChangeBookingPartEndDate.bind(this);
+		this.handleChangeBookingType = this.handleChangeBookingType.bind(this);
 		this.handleSubmit = this.handleSubmit.bind(this);
 
 		this.onStoreChange = this.onStoreChange.bind(this);
@@ -89,6 +91,18 @@ export default class NewBookingForm extends React.Component {
 						<textarea required className="form-control" id="inputDescription" placeholder="I need this space in particular because ... and I want it for this long because ..." value={this.state.booking.description} onChange={this.handleChangeBookingDescription} disabled={this.state.disabled} />
 					</div>
 				</div>
+				{this.props.allowedEventTypes.length > 1 ? (
+					<div className={`form-group row` + (this.hasError('booking', 'type') ? ' has-error': '')}>
+						<label htmlFor="inputType" className="col-sm-2 form-control-label">Type</label>
+						<div className="col-sm-10">
+							<select required className="form-control" id="inputType" value={this.state.booking.type} onChange={this.handleChangeBookingType} disabled={this.state.disabled}>
+								{this.props.allowedEventTypes.map((eventType) => (
+									<option key={eventType} value={eventType}>{eventType}</option>
+								))}
+							</select>
+						</div>
+					</div>
+				) : []}
 				<div className={`form-group row` + (this.hasError('bookingPart', 'startDate') ? ' has-error': '')}>
 					<label htmlFor="inputStartDate" className="col-sm-2 form-control-label">Start Time</label>
 					<div className="col-sm-10">
@@ -114,7 +128,8 @@ export default class NewBookingForm extends React.Component {
 		this.setState({
 			booking: {
 				name: e.target.value,
-				description: this.state.booking.description
+				description: this.state.booking.description,
+				type: this.state.booking.type
 			}
 		});
 	}
@@ -122,10 +137,21 @@ export default class NewBookingForm extends React.Component {
 	handleChangeBookingDescription (e) {
 		this.setState({
 			booking: {
+				description: e.target.value,
 				name: this.state.booking.name,
-				description: e.target.value
+				type: this.state.booking.type
 			}
 		});
+	}
+
+	handleChangeBookingType (e) {
+		this.setState({
+			booking: {
+				type: e.target.value,
+				name: this.state.booking.name,
+				description: this.state.booking.description
+			}
+		})
 	}
 
 	handleChangeBookingPartStartDate (e) {
@@ -160,13 +186,13 @@ export default class NewBookingForm extends React.Component {
 		};
 
 		let booking = {
-			type: 'booking',
+			type: this.state.booking.type,
 			name: this.state.booking.name,
 			description: this.state.booking.description
 		};
 		BookingActions.create(booking).then((booking) => {
 			if (!booking) {
-				return BookingActions.delete(booking);
+				return BookingActions.destroy(booking);
 			}
 
 			let bookingPart = {
@@ -177,83 +203,15 @@ export default class NewBookingForm extends React.Component {
 			};
 			return BookingPartActions.create(bookingPart).then((bookingPart) => {
 				if (!bookingPart) {
-					return BookingActions.delete(booking);
+					return BookingActions.destroy(booking);
 				}
 
 				this.onNewBookingCreated(booking, bookingPart);
 			}, (err) => {
-				return BookingActions.delete(booking);
+				return BookingActions.destroy(booking);
 			});
 		}).then(undisable, undisable);
 
-        //
-		//let bookingPath = API.path('/bookings/bookings/');
-		//fetch(
-		//	bookingPath, {
-		//		method: 'POST',
-		//		headers: {
-		//			'Accept': 'application/json',
-		//			'Content-Type': 'application/json',
-		//			'Authorization': AuthStore.makeAuthHeader()
-		//		},
-		//		body: JSON.stringify({
-		//			type: 'booking',
-		//			name: this.state.booking.name,
-		//			description: this.state.booking.description
-		//		})
-		//	}
-		//).then((response) => {
-		//	if (response.status >= 400) {
-		//		throw new Error("bad response from server");
-		//	}
-        //
-		//	return response.json();
-		//}).then((body) => {
-		//	let bookingPartPath = API.path(`/bookings/bookings/${body.id}/booking-parts/`);
-		//	return fetch(
-		//		bookingPartPath, {
-		//			method: 'POST',
-		//			headers: {
-		//				'Accept': 'application/json',
-		//				'Content-Type': 'application/json',
-		//				'Authorization': AuthStore.makeAuthHeader()
-		//			},
-		//			body: JSON.stringify({
-		//				booking: body.id,
-		//				bookable: this.props.bookableId,
-		//				booking_start: moment(this.state.bookingPart.startDate).toISOString(),
-		//				booking_end: moment(this.state.bookingPart.endDate).toISOString()
-		//			})
-		//		}
-		//	).then((response) => {
-		//		if (response.status >= 400) {
-		//			throw new Error("bad response from server");
-		//		}
-        //
-		//		return response.json();
-		//	}).catch((err) => {
-		//		// try and delete the booking we created, but we don't really care
-		//		if (body.id) {
-		//			fetch(
-		//				bookingPath + body.id + "/", {
-		//					method: 'DELETE',
-		//					headers: {
-		//						'Accept': 'application/json',
-		//						'Content-Type': 'application/json',
-		//						'Authorization': AuthStore.makeAuthHeader()
-		//					}
-		//				}
-		//			);
-		//		}
-		//		throw new Error(err);
-		//	}).then((partBody) => {
-		//		this.onNewBookingCreated(body, partBody);
-		//		return partBody;
-		//	});
-		//}).catch((err) => {
-		//	console.error(err);
-		//	alert("Error while creating booking: " + err);
-		//}).then(undisable, undisable);
 	}
 
 	onNewBookingCreated (booking, bookingPart) {
