@@ -6,10 +6,10 @@ import { IS_DEBUG } from "../constants/GlobalConstants";
 export class API {
 	static path(resource) {
 		if (__CLIENT__) {
-			const {hostname, port} = window.location;
-			return `http://${hostname}:${port}/api${resource}`;
+			const {hostname, port, protocol} = window.location;
+			return `${protocol}//${hostname}:${port}/api${resource}`;
 		} else if (__SERVER__) {
-			return `http://localhost:8111/api${resource}`;
+			return `http://localhost:27001/api${resource}`;
 		} else {
 			throw new Error("neither client nor server?!?");
 		}
