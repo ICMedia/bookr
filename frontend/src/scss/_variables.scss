@@ -1,0 +1,28 @@
+$fg-unavailable: darkred;
+$fg-warning: goldenrod;
+
+$prefix-unavailable: '✘';
+$prefix-warning: '❗';
+
+$bg-pending_approval: skyblue;
+$bg-approved: lightgreen;
+$bg-rejected: salmon;
+$bg-cancelled: sandybrown;
+
+
+@mixin unavailable-before {
+	display: inline-block;
+	content: $prefix-unavailable;
+	color: $fg-unavailable;
+	width: 1em;
+	text-align: center;
+	padding-right: 0.3em;
+}
+@mixin warning-before {
+	display: inline-block;
+	content: $prefix-warning;
+	color: $fg-warning;
+	width: 1em;
+	text-align: center;
+	padding-right: 0.3em;
+}

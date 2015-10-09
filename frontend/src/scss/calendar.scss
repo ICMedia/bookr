@@ -1,0 +1,120 @@
+@import "_variables";
+
+.calendar {
+	width: 100%;
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.calendar, .calendar * {
+	box-sizing: border-box;
+}
+
+.calendar-day, .calendar-head-day {
+	flex: 0 0 14.285714285%;
+	border: 1px solid #ddd;
+	border-radius: 3px;
+}
+
+.calendar-head-day {
+	text-align: center;
+	font-weight: bold;
+	font-size: large;
+
+	height: 2em;
+	line-height: 2em;
+}
+
+.calendar-day {
+	min-height: 6em;
+	padding: 2px 7px;
+}
+
+.calendar-other-month-day {
+	opacity: 0.2;
+}
+
+.calendar-first-day-in-week .calendar-event {
+	margin-left: -7px;
+}
+
+.calendar-last-day-in-week .calendar-event {
+	margin-right: -7px;
+}
+
+.calendar-event, .calendar-event-spacefiller {
+
+	margin-left: -9px;
+	margin-right: -9px;
+	position: relative;
+
+	font-size: x-small;
+	padding: 2px 5px;
+	height: 1.4em;
+	line-height: 1.4em;
+	margin-top: 2px;
+
+	white-space: nowrap;
+
+}
+
+.calendar-event {
+	&.calendar-event-start {
+		margin-left: 0;
+		border-top-left-radius: 3px;
+		border-bottom-left-radius: 3px;
+	}
+	&.calendar-event-end {
+		margin-right: 0;
+		border-top-right-radius: 3px;
+		border-bottom-right-radius: 3px;
+	}
+	&.calendar-event-text {
+		z-index: 100;
+	}
+
+	&.calendar-event-type-unavailable.calendar-event-text:before {
+		@include unavailable-before;
+	}
+
+	&.calendar-event-type-warning.calendar-event-text:before {
+		@include warning-before;
+	}
+}
+
+.calendar-event-key {
+	display: flex;
+}
+
+.calendar-event-key-item {
+	flex: 1;
+	font-size: x-small;
+	padding: 2px 4px;
+}
+
+.calendar-event-key-title {
+	margin-top: 0.4em;
+}
+
+.calendar-event-status-pending_approval {
+	background-color: $bg-pending_approval;
+}
+
+.calendar-event-status-approved {
+	background-color: $bg-approved;
+}
+
+.calendar-event-status-rejected {
+	background-color: $bg-rejected;
+}
+
+.calendar-event-status-cancelled {
+	background-color: $bg-cancelled;
+}
+
+.calendar-title {
+	text-align: center;
+	height: 0;
+	position: relative;
+	top: 1em;
+}

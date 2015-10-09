@@ -1,0 +1,21 @@
+@import "_variables";
+
+.tablerow-status-pending_approval {
+	background-color: rgba($bg-pending_approval, 0.3);
+}
+.tablerow-status-approved {
+	background-color: rgba($bg-approved, 0.3);
+}
+.tablerow-status-rejected {
+	background-color: rgba($bg-rejected, 0.3);
+}
+.tablerow-status-cancelled {
+	background-color: rgba($bg-cancelled, 0.3);
+}
+
+.event-title-type-unavailable:before {
+	@include unavailable-before;
+}
+.event-title-type-warning:before {
+	@include warning-before;
+}
