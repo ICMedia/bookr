@@ -26,7 +26,9 @@ SECRET_KEY = 'w$*#hqj8adbdg8-r184y=^d$3*ul#q#en5%km@zv@)8&0sckc1'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'room-bookings.media.su.ic.ac.uk'
+]
 
 
 # Application definition
@@ -126,8 +128,41 @@ JWT_AUTH = {
     'JWT_ALLOW_REFRESH': True,
 }
 
+import ldap
+from django_auth_ldap.config import LDAPSearch, NestedMemberDNGroupType
+
+AUTH_LDAP_SERVER_URI = "ldap://cog.media.su.ic.ac.uk"
+
+AUTH_LDAP_USER_SEARCH = LDAPSearch(
+    "cn=users,cn=accounts,dc=media,dc=su,dc=ic,dc=ac,dc=uk", ldap.SCOPE_SUBTREE, "(uid=%(user)s)"
+)
+AUTH_LDAP_USER_DN_TEMPLATE = "uid=%(user)s,cn=users,cn=accounts,dc=media,dc=su,dc=ic,dc=ac,dc=uk"
+
+AUTH_LDAP_GROUP_SEARCH = LDAPSearch(
+    "cn=groups,cn=accounts,dc=media,dc=su,dc=ic,dc=ac,dc=uk", ldap.SCOPE_SUBTREE, "(objectClass=groupOfNames)"
+)
+AUTH_LDAP_GROUP_TYPE = NestedMemberDNGroupType('member', 'cn')
+
+AUTH_LDAP_START_TLS = False
+AUTH_LDAP_USER_ATTR_MAP = {
+    "first_name": "givenName",
+    "last_name": "sn",
+    "email": "mail"
+}
+AUTH_LDAP_USER_FLAGS_BY_GROUP = {
+    "is_staff": "cn=wheel,cn=groups,cn=accounts,dc=media,dc=su,dc=ic,dc=ac,dc=uk",
+    "is_superuser": "cn=wheel,cn=groups,cn=accounts,dc=media,dc=su,dc=ic,dc=ac,dc=uk",
+}
+AUTH_LDAP_BIND_AS_AUTHENTICATING_USER = True
+
+AUTHENTICATION_BACKENDS = (
+    'django_auth_ldap.backend.LDAPBackend',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+
 import os
-if os.environ.get('MODE', 'development') == 'PRODUCTION':
+if os.environ.get('MODE', 'development').lower() == 'production':
     DEBUG = False
     TEMPLATE_DEBUG = False
 
@@ -137,3 +172,11 @@ if os.environ.get('MODE', 'development') == 'PRODUCTION':
     DATABASES['default']['HOST'] = os.environ['DATABASE_HOST']
 
     SECRET_KEY = os.environ['SECRET_KEY']
+
+    AUTH_LDAP_START_TLS = True
+else:
+    import logging
+
+    logger = logging.getLogger('django_auth_ldap')
+    logger.addHandler(logging.StreamHandler())
+    logger.setLevel(logging.DEBUG)
