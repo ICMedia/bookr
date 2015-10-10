@@ -42,6 +42,7 @@ class BookingAPI {
 			}
 		}).then((booking) => {
 			BookingServerActions.receiveBooking(booking);
+			return booking;
 		});
 	}
 

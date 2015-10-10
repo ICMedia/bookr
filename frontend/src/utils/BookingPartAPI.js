@@ -52,6 +52,7 @@ class BookingPartAPI {
 			}
 		}).then((bookingpart) => {
 			BookingPartServerActions.receiveBookingPart(bookingpart);
+			return bookingpart;
 		});
 	}
 
