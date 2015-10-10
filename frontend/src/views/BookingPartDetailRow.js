@@ -39,13 +39,20 @@ export default class BookingPartDetailRow extends React.Component {
 
 	render () {
 		const { bookingPart, showApprovalColumn, showStatusColumn } = this.props;
+
+		const bookingStartMoment = moment(bookingPart.booking_start);
+		const bookingEndMoment = moment(bookingPart.booking_end);
+
+		const year = bookingStartMoment.year(),
+			 month = bookingStartMoment.month()+1;
+
 		return (
 			<tr key={bookingPart.id} className={`tablerow-status-${bookingPart.status} tablerow-type-${bookingPart.booking.type}`}>
-				<th><Link to={`/bookables/${bookingPart.bookable.id}`}>{bookingPart.bookable.name}</Link></th>
+				<th><Link to={`/bookables/${bookingPart.bookable.id}/${year}/${month}`}>{bookingPart.bookable.name}</Link></th>
 				{showStatusColumn ? <td>{statuses.prettyTextForStatus(bookingPart.status)}</td> : []}
-				<td>{moment(bookingPart.booking_start).format(GlobalConstants.DATE_FORMAT)}</td>
-				<td>{moment(bookingPart.booking_end).format(GlobalConstants.DATE_FORMAT)}</td>
-				<td>{moment.duration(moment(bookingPart.booking_end).diff(moment(bookingPart.booking_start))).humanize()}</td>
+				<td>{bookingStartMoment.format(GlobalConstants.DATE_FORMAT)}</td>
+				<td>{bookingEndMoment.format(GlobalConstants.DATE_FORMAT)}</td>
+				<td>{moment.duration(bookingEndMoment.diff(bookingStartMoment)).humanize()}</td>
 				{showApprovalColumn ? (
 					<td>
 						<div className="btn-group" role="group">
