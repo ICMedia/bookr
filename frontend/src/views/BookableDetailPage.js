@@ -11,7 +11,7 @@ export default class BookableDetailPage extends React.Component {
 		if (!year && !month && !day) {
 			let now = new Date();
 			year = now.getFullYear();
-			month = now.getMonth();
+			month = now.getMonth()+1;
 		}
 
 		let padToDigits = (num, toDigits) => {
