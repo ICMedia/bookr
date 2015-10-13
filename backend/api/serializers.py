@@ -164,7 +164,7 @@ class BookingPartWriteSerializer(serializers.ModelSerializer):
         if not user.is_authenticated():
             raise Exception("no user authenticated?!?")
 
-        if not user.is_staff and validated_data.booking.creator != user:
+        if not user.is_staff and validated_data['booking'].creator != user:
             raise Exception("user cannot create new part on someone else's booking")
 
         if not validated_data['bookable'].active_approvers.filter(approver=user):
