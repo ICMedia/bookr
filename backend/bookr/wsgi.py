@@ -15,4 +15,7 @@ from whitenoise.django import DjangoWhiteNoise
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "bookr.settings")
 
 application = get_wsgi_application()
-application = DjangoWhiteNoise(application)
+
+from django.conf import settings
+if not settings.DEBUG:
+    application = DjangoWhiteNoise(application)
