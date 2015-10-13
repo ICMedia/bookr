@@ -6,6 +6,52 @@ import api.serializers
 import bookings.models
 
 
+class BookablePermission(permissions.BasePermission):
+    def has_permission(self, request, view):
+        if request.method in permissions.SAFE_METHODS:
+            return True
+
+        if request.user.is_superuser:
+            return True
+
+        return False
+
+
+class BookingPermission(permissions.BasePermission):
+    def has_permission(self, request, view):
+        return request.user.is_authenticated()
+
+    def has_object_permission(self, request, view, obj):
+        if request.method in permissions.SAFE_METHODS:
+            return True
+
+        if request.user.is_superuser:
+            return True
+        if obj.creator == request.user:
+            return True
+
+        return False
+
+
+class BookingPartPermission(permissions.BasePermission):
+    def has_permission(self, request, view):
+        return request.user.is_authenticated()
+
+    def has_object_permission(self, request, view, obj):
+        if request.method in permissions.SAFE_METHODS:
+            return True
+
+        if request.user.is_superuser:
+            return True
+
+        if obj.bookable.approvers.filter(approver=request.user).exists():
+            return True
+        if obj.booking.creator == request.user:
+            return True
+
+        return False
+
+
 class CurrentUserView(generics.RetrieveAPIView):
     serializer_class = api.serializers.UserSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -17,6 +63,7 @@ class CurrentUserView(generics.RetrieveAPIView):
 class BookableViewSet(viewsets.ModelViewSet):
     queryset = bookings.models.Bookable.objects.all()
     serializer_class = api.serializers.BookableWriteSerializer
+    permission_classes = [BookablePermission]
 
     def get_serializer_class(self):
         if self.action in ('list', 'retrieve'):
@@ -28,6 +75,7 @@ class BookableViewSet(viewsets.ModelViewSet):
 class BookingViewSet(viewsets.ModelViewSet):
     queryset = bookings.models.Booking.objects.all()
     serializer_class = api.serializers.BookingWriteSerializer
+    permission_classes = [BookingPermission]
 
     def get_serializer_class(self):
         if self.action in ('list', 'retrieve'):
@@ -64,6 +112,7 @@ class BookingViewSet(viewsets.ModelViewSet):
 class BookingPartViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
     queryset = bookings.models.BookingPart.objects.all()
     serializer_class = api.serializers.BookingPartWriteSerializer
+    permission_classes = [BookingPartPermission]
 
     def get_serializer_class(self):
         if self.action in ('list', 'retrieve'):
