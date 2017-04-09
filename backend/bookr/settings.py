@@ -162,9 +162,14 @@ if os.environ.get('MODE', 'development').lower() == 'production':
     SECRET_KEY = os.environ['SECRET_KEY']
 
     STATIC_ROOT = os.environ['STATIC_ROOT']
+
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST = 'smarthost.cc.ic.ac.uk'
 else:
     import logging
 
     logger = logging.getLogger('django_auth_ldap')
     logger.addHandler(logging.StreamHandler())
     logger.setLevel(logging.DEBUG)
+
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

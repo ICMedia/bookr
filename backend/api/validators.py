@@ -47,7 +47,6 @@ class UniqueBookingPartValidator(object):
             return  # we don't care if it's not being approved
 
         booking = attrs.get('booking', self.instance.booking if self.instance else None)
-        print(booking.type)
         if booking.type == 'warning':
             return  # we also don't care about conflicts if it's a "warning"
 

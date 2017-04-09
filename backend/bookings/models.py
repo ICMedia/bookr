@@ -1,7 +1,10 @@
 from __future__ import unicode_literals
-import datetime
 from django.core.exceptions import ValidationError
 from django.utils.encoding import python_2_unicode_compatible
+from django.utils import timezone
+import django.db.models.signals
+from django.core.mail import send_mail
+from django.dispatch import receiver
 
 from django.db import models
 from django.conf import settings
@@ -32,8 +35,8 @@ class Bookable(models.Model):
     @property
     def active_approvers(self):
         return self.approvers.filter(
-            authority_start__lt=datetime.datetime.now(),
-            authority_end__gt=datetime.datetime.now()
+            authority_start__lt=timezone.now(),
+            authority_end__gt=timezone.now()
         )
 
     def __str__(self):
@@ -113,3 +116,27 @@ class BookingPart(TableLockerMixin, models.Model):
 
     def __str__(self):
         return "{}: {} to {} on {}".format(self.status, self.booking_start, self.booking_end, self.bookable)
+
+
+@receiver(django.db.models.signals.post_save, sender=BookingPart)
+def post_booking_save(sender, instance, created, **kwargs):
+    if not created:
+        return
+    booking = instance.booking
+    approver_emails = instance.bookable.active_approvers.values_list('approver__email', flat=True)
+
+    send_mail(
+        '[ICUMedia Room Bookings] New Booking: {}'.format(booking.name),
+        """Hi!
+
+{} ({}) has created a new booking:
+
+https://room-bookings.media.su.ic.ac.uk/bookings/{}
+
+Please approve or reject it at your earliest convenience.
+
+Thanks,
+Mr. Room Bookings""".format(booking.creator.get_full_name(), booking.creator.username, booking.id),
+        'mediatech@imperial.ac.uk',
+        list(approver_emails),
+    )

@@ -1,12 +1,11 @@
 from django.contrib.auth import get_user_model
+from django.utils import timezone
 
 from rest_framework import serializers
 from rest_framework.fields import empty, SerializerMethodField, SkipField
 
 import bookings.models
 from . import validators
-
-import datetime
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -21,8 +20,8 @@ class UserSerializer(serializers.ModelSerializer):
     def get_isApprover(self, obj):
         return bookings.models.BookableApprover.objects.filter(
             approver=obj,
-            authority_start__lt=datetime.datetime.now(),
-            authority_end__gt=datetime.datetime.now()
+            authority_start__lt=timezone.now(),
+            authority_end__gt=timezone.now()
         ).exists()
 
     class Meta:
@@ -69,7 +68,6 @@ class BookingReadSerializer(serializers.ModelSerializer):
     def get_deletable(self, obj):
         user = self.context['request'].user
 
-        print(user, obj.creator)
         return {
             'authorised': user.is_staff or obj.creator == user,
             'state': not obj.bookingpart_set.filter(status__in=[

@@ -1,9 +1,12 @@
 from rest_framework import viewsets, generics, permissions
-import datetime
 from rest_framework_extensions.mixins import NestedViewSetMixin
+
+from django.utils import timezone
 
 import api.serializers
 import bookings.models
+
+import datetime
 
 
 class BookablePermission(permissions.BasePermission):
@@ -95,8 +98,8 @@ class BookingViewSet(viewsets.ModelViewSet):
         if self.request.query_params.get('awaiting_approval_by', None):
             can_approve_qs = bookings.models.BookableApprover.objects.filter(
                 approver__username=self.request.query_params['awaiting_approval_by'],
-                authority_start__lt=datetime.datetime.now(),
-                authority_end__gt=datetime.datetime.now()
+                authority_start__lt=timezone.now(),
+                authority_end__gt=timezone.now()
             )
             qs = qs.filter(
                 bookingpart__bookable__approvers=can_approve_qs, bookingpart__status='pending_approval'
@@ -109,7 +112,7 @@ class BookingViewSet(viewsets.ModelViewSet):
 
         if self.request.query_params.get('in_the_future', None):
             qs = qs.filter(
-                bookingpart__booking_end__gte=datetime.datetime.now()
+                bookingpart__booking_end__gte=timezone.now()
             )
 
         return qs
