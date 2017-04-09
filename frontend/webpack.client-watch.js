@@ -28,7 +28,7 @@ config.module = {
 	loaders: [
 		{include: /\.json$/, loaders: ["json-loader"]},
 		{include: /\.js$/, loaders: ["react-hot", "babel-loader?stage=0&optional=runtime&plugins=typecheck"], exclude: /node_modules/},
-		{include: /\.scss$/, loader: ExtractTextPlugin.extract('css!sass')}
+		{include: /\.s?css$/, loader: ExtractTextPlugin.extract('css!sass')}
 	]
 };
 

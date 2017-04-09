@@ -5,6 +5,7 @@ import Transmit from "react-transmit";
 import routes from "views/routes";
 import {createHistory} from "history";
 
+import "react-datetime/css/react-datetime.css";
 import "../bootstrap/scss/bootstrap-flex.scss";
 import "scss/calendar.scss";
 import "scss/bookingparts.scss";

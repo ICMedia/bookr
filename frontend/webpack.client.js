@@ -29,7 +29,7 @@ module.exports = {
 			{include: /\.json$/, loaders: ["json-loader"]},
 			{include: /\.js$/, loaders: ["babel-loader?stage=0&optional=runtime&plugins=typecheck"], exclude: /node_modules/},
 			//{include: /\.scss$/, loaders: ["style", "css", "sass"]}
-			{include: /\.scss$/, loader: ExtractTextPlugin.extract('css!sass')}
+			{include: /\.s?css$/, loader: ExtractTextPlugin.extract('css!sass')}
 		]
 	},
 	resolve: {

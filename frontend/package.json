@@ -41,6 +41,7 @@
     "piping": "^0.3.0",
     "rc-tooltip": "^2.8.0",
     "react": "0.14.0-rc1",
+    "react-datetime": "^2.8.9",
     "react-dom": "0.14.0-rc1",
     "react-inline-css": "2.0.0",
     "react-router": "1.0.0-rc1",

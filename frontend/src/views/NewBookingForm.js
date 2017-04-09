@@ -2,6 +2,7 @@ import React from "react";
 
 import __fetch from "isomorphic-fetch";
 import moment from "moment";
+import Datetime from "react-datetime";
 
 import AuthStore from "../stores/AuthStore";
 import { API } from "../utils/api_info";
@@ -38,6 +39,9 @@ export default class NewBookingForm extends React.Component {
 		this.handleChangeBookingPartEndDate = this.handleChangeBookingPartEndDate.bind(this);
 		this.handleChangeBookingType = this.handleChangeBookingType.bind(this);
 		this.handleSubmit = this.handleSubmit.bind(this);
+
+		this.checkValidStartDate = this.checkValidStartDate.bind(this);
+		this.checkValidEndDate = this.checkValidEndDate.bind(this);
 
 		this.onStoreChange = this.onStoreChange.bind(this);
 	}
@@ -106,13 +110,13 @@ export default class NewBookingForm extends React.Component {
 				<div className={`form-group row` + (this.hasError('bookingPart', 'startDate') ? ' has-error': '')}>
 					<label htmlFor="inputStartDate" className="col-sm-2 form-control-label">Start Time</label>
 					<div className="col-sm-10">
-						<input type="datetime-local" required className="form-control" id="inputStartDate" value={this.state.bookingPart.startDate} onChange={this.handleChangeBookingPartStartDate} disabled={this.state.disabled} />
+						<Datetime inputProps={{ required: true, className: 'form-control', id: 'inputStartDate', disabled: this.state.disabled }} value={this.state.bookingPart.startDate} onChange={this.handleChangeBookingPartStartDate} isValidDate={this.checkValidStartDate} locale="en-gb" />
 					</div>
 				</div>
 				<div className={`form-group row` + (this.hasError('bookingPart', 'endDate') ? ' has-error': '')}>
 					<label htmlFor="inputEndDate" className="col-sm-2 form-control-label">End Time</label>
 					<div className="col-sm-10">
-						<input type="datetime-local" required className="form-control" id="inputEndDate" value={this.state.bookingPart.endDate} onChange={this.handleChangeBookingPartEndDate} disabled={this.state.disabled} />
+						<Datetime inputProps={{ required: true, className: 'form-control', id: 'inputEndDate', disabled: this.state.disabled }} value={this.state.bookingPart.endDate} onChange={this.handleChangeBookingPartEndDate} isValidDate={this.checkValidEndDate} locale="en-gb" />
 					</div>
 				</div>
 				<div className="form-group row">
@@ -154,20 +158,20 @@ export default class NewBookingForm extends React.Component {
 		})
 	}
 
-	handleChangeBookingPartStartDate (e) {
+	handleChangeBookingPartStartDate (m) {
 		this.setState({
 			bookingPart: {
-				startDate: e.target.value,
+				startDate: m,
 				endDate: this.state.bookingPart.endDate
 			}
 		});
 	}
 
-	handleChangeBookingPartEndDate (e) {
+	handleChangeBookingPartEndDate (m) {
 		this.setState({
 			bookingPart: {
 				startDate: this.state.bookingPart.startDate,
-				endDate: e.target.value
+				endDate: m
 			}
 		});
 	}
@@ -227,5 +231,16 @@ export default class NewBookingForm extends React.Component {
 				bookingPart: BookingPartStore.getCreateErrors()
 			}
 		})
+	}
+
+	checkValidStartDate (currentDate, selectedDate) {
+		return currentDate.isAfter(moment().subtract(1, 'day'));
+	}
+
+	checkValidEndDate (currentDate, selectedDate) {
+		if (!this.state.bookingPart.startDate) {
+			return currentDate.isAfter(moment().subtract(1, 'day'));
+		}
+		return currentDate.isAfter(moment(this.state.bookingPart.startDate).subtract(1, 'day'));
 	}
 }
