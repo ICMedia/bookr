@@ -17,7 +17,8 @@ class BookingAPI {
 		return API.fetchJsonPage(`/bookings/bookings/${qs}`, {
 			method: 'GET',
 			headers: {
-				'Accept': 'application/json'
+				'Accept': 'application/json',
+				'Authorization': AuthStore.makeAuthHeader()
 			}
 		});
 	}
@@ -26,7 +27,8 @@ class BookingAPI {
 		return API.fetchAllJsonPages(`/bookings/bookings/`, qdata, {
 			method: 'GET',
 			headers: {
-				'Accept': 'application/json'
+				'Accept': 'application/json',
+				'Authorization': AuthStore.makeAuthHeader()
 			}
 		}, (results) => {
 			BookingServerActions.receiveBookingsForQuery(qdata, results);
@@ -38,7 +40,8 @@ class BookingAPI {
 		return API.fetchJson(`/bookings/bookings/${id}/`, {
 			method: 'GET',
 			headers: {
-				'Accept': 'application/json'
+				'Accept': 'application/json',
+				'Authorization': AuthStore.makeAuthHeader()
 			}
 		}).then((booking) => {
 			BookingServerActions.receiveBooking(booking);
@@ -77,7 +80,7 @@ class BookingAPI {
 	}
 
 	destroy(bookingId) {
-		return API.fetchJson(`/bookings/bookings/${bookingId}/`, {
+		return API.fetch(`/bookings/bookings/${bookingId}/`, {
 			method: 'DELETE',
 			headers: {
 				'Accept': 'application/json',

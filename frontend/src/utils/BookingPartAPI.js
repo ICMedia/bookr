@@ -17,7 +17,8 @@ class BookingPartAPI {
 		return API.fetchJsonPage(`/bookings/booking-parts/${qs}`, {
 			method: 'GET',
 			headers: {
-				'Accept': 'application/json'
+				'Accept': 'application/json',
+				'Authorization': AuthStore.makeAuthHeader()
 			}
 		});
 	}
@@ -26,7 +27,8 @@ class BookingPartAPI {
 		return API.fetchAllJsonPages(`/bookings/bookings/${bookingId}/booking-parts/`, qdata, {
 			method: 'GET',
 			headers: {
-				'Accept': 'application/json'
+				'Accept': 'application/json',
+				'Authorization': AuthStore.makeAuthHeader()
 			}
 		}, (results, complete) => {
 			BookingPartServerActions.receiveBookingPartsForBooking(bookingId, qdata, results, complete);
@@ -37,7 +39,8 @@ class BookingPartAPI {
 		return API.fetchAllJsonPages(`/bookings/bookables/${bookableId}/booking-parts/`, qdata, {
 			method: 'GET',
 			headers: {
-				'Accept': 'application/json'
+				'Accept': 'application/json',
+				'Authorization': AuthStore.makeAuthHeader()
 			}
 		}, (results, complete) => {
 			BookingPartServerActions.receiveBookingPartsForBookable(bookableId, qdata, results, complete);
@@ -48,7 +51,8 @@ class BookingPartAPI {
 		return API.fetchJson(`/bookings/booking-parts/${id}/`, {
 			method: 'GET',
 			headers: {
-				'Accept': 'application/json'
+				'Accept': 'application/json',
+				'Authorization': AuthStore.makeAuthHeader()
 			}
 		}).then((bookingpart) => {
 			BookingPartServerActions.receiveBookingPart(bookingpart);

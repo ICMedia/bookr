@@ -7,7 +7,7 @@ export default class BookingDetailPage extends React.Component {
 		const {params} = this.props;
 
 		return (
-			<BookingDetail bookingId={params.bookingId} />
+			<BookingDetail bookingId={params.bookingId} history={this.props.history} />
 		);
 	}
 }

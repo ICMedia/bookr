@@ -30,6 +30,7 @@ export default class BookingDetail extends React.Component {
 		this.onAuthChange = this.onAuthChange.bind(this);
 
 		this.canApprove = this.canApprove.bind(this);
+		this.destroyBooking = this.destroyBooking.bind(this);
 	}
 
 	componentWillMount () {
@@ -78,6 +79,12 @@ export default class BookingDetail extends React.Component {
 		return BookingPartStore.userCanApprove(bookingPart.id, this.state.user.username);
 	}
 
+	destroyBooking () {
+		BookingActions.destroy(this.state.booking).then(() => {
+      this.props.history.pushState(null, '/');
+    })
+	}
+
 	formatName (creator) {
 		if (creator.firstName) {
 			return <span>{creator.firstName} {creator.lastName} (<tt>{creator.username}</tt>)</span>
@@ -108,7 +115,6 @@ export default class BookingDetail extends React.Component {
 		const bulkButtons = bulkShowApprove ? this.renderBulkButtons() : [];
 
 		const conflicts = this.gatherConflicts(myBookingParts);
-		console.log(conflicts, conflicts.get(11));
 
 		return (
 			<div>
@@ -128,6 +134,12 @@ export default class BookingDetail extends React.Component {
 								<dd key="2" className="col-sm-10">{this.generateStatus(booking, myBookingParts)}</dd>
 							] : []}
 						</dl>
+
+						{booking.deletable.authorised ? (
+							<div className="row">
+								<button className="btn btn-danger" disabled={!booking.deletable.state} onClick={this.destroyBooking}>Delete!</button>
+							</div>
+						) : []}
 					</div>
 				</div>
 

@@ -29,8 +29,18 @@ export class API {
 		})
 	}
 
+  static fetch(apiPath, params) {
+		return fetch(API.path(apiPath), params).then((response) => {
+			if (response.status >= 400) {
+				throw new ResponseError(response, "Bad response from server");
+			}
+
+			return response;
+		})
+  }
+
 	static fetchJson(apiPath, params) {
-		return API.jsonResponse(fetch(API.path(apiPath), params));
+    return API.fetch(apiPath, params).then((response) => response.json());
 	}
 
 	static fetchJsonPage(apiPath, params) {

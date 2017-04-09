@@ -64,12 +64,26 @@ class BookableReadSerializer(serializers.ModelSerializer):
 
 class BookingReadSerializer(serializers.ModelSerializer):
     creator = UserSerializer()
+    deletable = serializers.SerializerMethodField()
+
+    def get_deletable(self, obj):
+        user = self.context['request'].user
+
+        print(user, obj.creator)
+        return {
+            'authorised': user.is_staff or obj.creator == user,
+            'state': not obj.bookingpart_set.filter(status__in=[
+                bookings.models.BookingPart.STATUS.pending_approval,
+                bookings.models.BookingPart.STATUS.approved]).exists(),
+        }
+
 
     class Meta:
         model = bookings.models.Booking
         fields = (
             'id',
             'type', 'name', 'description', 'creator', 'created_date',
+            'deletable',
         )
 
 
