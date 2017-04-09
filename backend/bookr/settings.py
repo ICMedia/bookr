@@ -131,27 +131,15 @@ JWT_AUTH = {
 import ldap
 from django_auth_ldap.config import LDAPSearch, NestedMemberDNGroupType
 
-AUTH_LDAP_SERVER_URI = "ldap://cog.media.su.ic.ac.uk"
+AUTH_LDAP_SERVER_URI = "ldaps://unixldap.cc.ic.ac.uk"
 
 AUTH_LDAP_USER_SEARCH = LDAPSearch(
-    "cn=users,cn=accounts,dc=media,dc=su,dc=ic,dc=ac,dc=uk", ldap.SCOPE_SUBTREE, "(uid=%(user)s)"
-)
-AUTH_LDAP_USER_DN_TEMPLATE = "uid=%(user)s,cn=users,cn=accounts,dc=media,dc=su,dc=ic,dc=ac,dc=uk"
-
-AUTH_LDAP_GROUP_SEARCH = LDAPSearch(
-    "cn=groups,cn=accounts,dc=media,dc=su,dc=ic,dc=ac,dc=uk", ldap.SCOPE_SUBTREE, "(objectClass=groupOfNames)"
-)
-AUTH_LDAP_GROUP_TYPE = NestedMemberDNGroupType('member', 'cn')
-
-AUTH_LDAP_START_TLS = False
+    'ou=People,ou=shibboleth,dc=ic,dc=ac,dc=uk', ldap.SCOPE_SUBTREE, '(uid=%(user)s)')
+AUTH_LDAP_USER_DN_TEMPLATE = 'uid=%(user)s,ou=People,ou=shibboleth,dc=ic,dc=ac,dc=uk'
 AUTH_LDAP_USER_ATTR_MAP = {
-    "first_name": "givenName",
-    "last_name": "sn",
-    "email": "mail"
-}
-AUTH_LDAP_USER_FLAGS_BY_GROUP = {
-    "is_staff": "cn=roombookingadmins,cn=groups,cn=accounts,dc=media,dc=su,dc=ic,dc=ac,dc=uk",
-    "is_superuser": "cn=wheel,cn=groups,cn=accounts,dc=media,dc=su,dc=ic,dc=ac,dc=uk",
+    'first_name': 'givenName',
+    'last_name': 'sn',
+    'email': 'mail'
 }
 AUTH_LDAP_BIND_AS_AUTHENTICATING_USER = True
 
@@ -174,8 +162,6 @@ if os.environ.get('MODE', 'development').lower() == 'production':
     SECRET_KEY = os.environ['SECRET_KEY']
 
     STATIC_ROOT = os.environ['STATIC_ROOT']
-
-    AUTH_LDAP_START_TLS = True
 else:
     import logging
 
