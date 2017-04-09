@@ -238,9 +238,7 @@ export default class NewBookingForm extends React.Component {
 	}
 
 	checkValidEndDate (currentDate, selectedDate) {
-		if (!this.state.bookingPart.startDate) {
-			return currentDate.isAfter(moment().subtract(1, 'day'));
-		}
-		return currentDate.isAfter(moment(this.state.bookingPart.startDate).subtract(1, 'day'));
+		const startDate = (this.state && this.state.bookingPart && this.state.bookingPart.startDate) ? moment(this.state.bookingPart.startDate) : moment();
+		return currentDate.isAfter(moment(startDate).subtract(1, 'day')) && currentDate.isBefore(moment(startDate).add(3, 'day'));
 	}
 }
